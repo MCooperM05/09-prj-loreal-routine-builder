@@ -125,7 +125,22 @@ productsContainer.innerHTML = `
 
 /* Set initial chat greeting */
 if (chatWindow) {
-  chatWindow.textContent = "👋 Hello! How can I help you today?";
+  chatWindow.innerHTML = "";
+
+  const welcomeMessage = document.createElement("div");
+  welcomeMessage.className = "msg ai";
+
+  const welcomeLabel = document.createElement("div");
+  welcomeLabel.className = "msg-label";
+  welcomeLabel.textContent = "L'Oréal Assistant";
+
+  const welcomeText = document.createElement("div");
+  welcomeText.className = "msg-text";
+  welcomeText.textContent = "👋 Hello! How can I help you today?";
+
+  welcomeMessage.appendChild(welcomeLabel);
+  welcomeMessage.appendChild(welcomeText);
+  chatWindow.appendChild(welcomeMessage);
 }
 
 updateSelectedProducts();
@@ -149,7 +164,8 @@ function getFilteredProducts() {
     const matchesCategory =
       !selectedCategory || product.category === selectedCategory;
 
-    const searchableText = `${product.name} ${product.brand} ${product.description} ${product.category}`.toLowerCase();
+    const searchableText =
+      `${product.name} ${product.brand} ${product.description} ${product.category}`.toLowerCase();
     const matchesSearch =
       !normalizedSearch || searchableText.includes(normalizedSearch);
 
@@ -337,10 +353,7 @@ function buildRoutinePrompt() {
    in the message content can inject real markup or scripts. */
 function formatMessageForDisplay(content) {
   const escapeHtml = (str) =>
-    str
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
+    str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
   let safe = escapeHtml(content);
 
@@ -448,7 +461,9 @@ async function generateRoutine() {
   // Show a friendly stand-in for what the user "said", listing only the
   // product NAMES (not brand/category/description) so nothing looks like
   // a raw data dump.
-  const productNames = selectedProducts.map((product) => product.name).join(", ");
+  const productNames = selectedProducts
+    .map((product) => product.name)
+    .join(", ");
   messages.push({
     role: "user",
     content: `Please create a routine using: ${productNames}.`,
